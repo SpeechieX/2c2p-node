@@ -5,12 +5,13 @@ const sdk = require('api')('@developers-2c2p-com/v4.0.2#1mld74kq6whmjv');
 
 const router = express.Router();
 
-// const secret = "CD229682D3297390B9F66FF4020B758F4A5E625AF4992E5D75D311D6458B38E2";
-const secret = "10A2528EFCAC6CE1787D3815F58C9C1CF8910B305A397B9E2912AEE8B362D186";
+
+const secret = process.env.SECRET;
+const merchant = process.env.MERCHANT_ID;
 
 router.get('/v1/clientIncoming', async (req, res) => {
 	let incoming = {
-			merchantId: "764764000001560",
+			merchantId: merchant,
 			// merchantId: "JT04",
 			invoiceNo: req.query.invoiceNo,
 			description: req.query.description,
@@ -18,15 +19,8 @@ router.get('/v1/clientIncoming', async (req, res) => {
 			currencyCode: req.query.currencyCode,
 			paymentChannel: ["CC"]
 	}
-	const data = jwt.sign(incoming, secret )
-
-	// sdk.post('/payment/4.1/PaymentToken', { "payload": data }, { Accept: 'text/plain' }).then(r => {
-	// 		// res.send(response.payload)
-	// 	const success = r.payload;
-	// 	var decoded = jwt.verify(success, secret);
-	// 	res.send(decoded);
-	// })
-
+	const data = jwt.sign(incoming, secret)
+	
 	axios({
 		method: 'POST',
 		headers: {
@@ -41,9 +35,7 @@ router.get('/v1/clientIncoming', async (req, res) => {
 		var decoded = jwt.verify(success, secret);
 		res.redirect(decoded.webPaymentUrl);
 	})
-})
-
-router.get('/v1/clientOutgoing', (req, res) => { })
+});
 
 module.exports = router;
 
